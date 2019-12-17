@@ -16,13 +16,15 @@ class Point{
 };
 
 class Line{
-    public:
+    public: Point point1, point2;
     template <class A, class B>
     void line(Point& a, Point& b){
+        this->point1 = a;
+        this->point2 = b;
         cout<<"\tFor Starting Point: "<<endl;
-        a.enterPointCoordinate();
+        point1.enterPointCoordinate();
         cout<<"\tFor End Point: "<<endl;
-        b.enterPointCoordinate();
+        point2.enterPointCoordinate();
     }
 };
 
@@ -53,22 +55,20 @@ class TurnTest{
 
 class LineIntersection{
     public: int flag;
+            Line line1, line2;
     
     //Function to Check Intersection betwwn two lines A & B
     template<class A, class B>
-    void checkIntersection(A& a, B& b){
+    int checkIntersection(A& a, B& b){
+        this->line1 = a;
+        this->line2 =b;
         Point p1,p2,p3,p4;
         double p123, p124, p341, p342; 
-        cout<<"\n\t\t           FIRST LINE";
-        cout<<"\n\t\tStart Point:"<<endl;
-        p1.enterPointCoordinate();
-        cout<<"\n\t\tEnd Point:"<<endl;
-        p2.enterPointCoordinate();
-        cout<<"\n\t\t           SECOND LINE";
-        cout<<"\n\t\tStart Point:"<<endl;
-        p3.enterPointCoordinate();
-        cout<<"\n\t\tEnd Point:"<<endl;
-        p4.enterPointCoordinate();
+        
+        p1 = line1.point1;
+        p2 = line1.point2;
+        p3 = line2.point1;
+        p4 = line2.point2;
         
         //Computer Area 
         p123 = computeArea(p1,p2,p3);
@@ -77,92 +77,11 @@ class LineIntersection{
         p342 = computeArea(p3,p4,p2);
         
         //Check for Pure Intersection
-        if (((p123 > 0 && p124 < 0) && (p341 > 0 && p342 < 0))|| ((p123 > 0 && p124 < 0) && (p341 < 0 && p342 > 0)) || ((p123 < 0 && p124 > 0) && (p341 < 0 && p342 > 0))|| ((p123 < 0 && p124 > 0) && (p341 > 0 && p342 < 0))){
-            cout<<"\n\t\t-----> Pure Intersection <-----"<<endl;
+        if (((p123 > 0 && p124 > 0) && (p341 < 0 && p342 < 0))|| ((p123 < 0 && p124 < 0) && (p341 > 0 && p342 > 0))){
+            return false;
         }
-        
-        //Check for Improper Intersection
-        //Check for overlapping when all points are collinear
-        else if ((p123 == 0 && p124 == 0 && p341 == 0 && p342 == 0)){
-            //Check if one line lie completely inside another line
-            //Check if second line lie completely inside first line
-            if((((p3.x_cor>=p1.x_cor || p3.y_cor>=p1.y_cor) && (p3.x_cor<=p2.x_cor || p3.y_cor<=p2.y_cor))&&((p4.x_cor>=p1.x_cor || p4.y_cor>=p1.y_cor) && (p4.x_cor<=p2.x_cor || p4.y_cor<=p2.y_cor)))
-            ||(((p3.x_cor<=p1.x_cor || p3.y_cor<=p1.y_cor) && (p3.x_cor>=p2.x_cor || p3.y_cor>=p2.y_cor))&&((p4.x_cor<=p1.x_cor || p4.y_cor<=p1.y_cor) && (p4.x_cor>=p2.x_cor || p4.y_cor>=p2.y_cor)))){
-                cout<<"\n\tThe second line lie comletely inside the first line";
-                cout<<"\n\t\t-----> Improper Intersection <-----"<<endl;
-            }
-            
-            //Check if first line lie completely inside second line
-            else if((((p1.x_cor>=p3.x_cor || p1.y_cor>=p3.y_cor) && (p1.x_cor<=p4.x_cor || p1.y_cor<=p4.y_cor))&&((p2.x_cor>=p3.x_cor || p2.y_cor>=p3.y_cor) && (p2.x_cor<=p4.x_cor || p2.y_cor<=p4.y_cor)))
-            ||(((p1.x_cor<=p3.x_cor || p1.y_cor<=p3.y_cor) && (p1.x_cor>=p4.x_cor || p1.y_cor>=p4.y_cor))&&((p2.x_cor<=p3.x_cor || p2.y_cor<=p3.y_cor) && (p2.x_cor>=p4.x_cor || p2.y_cor>=p4.y_cor)))){
-                cout<<"\n\tThe first line lie comletely inside the second line";
-                cout<<"\n\t\t-----> Improper Intersection <-----"<<endl;
-            }
-            
-            //Check if lines are not overlapping and no any touching
-            else if((((p3.x_cor<p1.x_cor || p3.y_cor<p1.y_cor) && (p3.x_cor<p2.x_cor || p3.y_cor<p2.y_cor))&&((p4.x_cor<p1.x_cor || p4.y_cor<p1.y_cor) && (p4.x_cor<p2.x_cor || p4.y_cor<p2.y_cor)))||(((p3.x_cor>p1.x_cor || p3.y_cor>p1.y_cor) && (p3.x_cor>p2.x_cor || p3.y_cor>p2.y_cor))&&((p4.x_cor>p1.x_cor || p4.y_cor>p1.y_cor) && (p4.x_cor>p2.x_cor || p4.y_cor>p2.y_cor)))){
-                cout<<"\n\tThe points of both lines are collinear but no any intersection.";
-                cout<<"\n\t\t-----> Lines do not intersects. <-----"<<endl;
-            }
-            
-            //Check if lines are partially overlapping
-            else if((((p3.x_cor>p1.x_cor || p3.y_cor>p1.y_cor) && (p3.x_cor<p2.x_cor || p3.y_cor<p2.y_cor))
-                &&
-                ((p4.x_cor>p1.x_cor || p4.y_cor>p1.y_cor) && (p4.x_cor>p2.x_cor || p4.y_cor>p2.y_cor))
-                ||
-                ((p4.x_cor<p1.x_cor || p4.y_cor<p1.y_cor) && (p4.x_cor<p2.x_cor || p4.y_cor<p2.y_cor)))
-                ||
-                (((p4.x_cor>p1.x_cor || p4.y_cor>p1.y_cor) && (p4.x_cor<p2.x_cor || p4.y_cor<p2.y_cor))
-                &&
-                ((p3.x_cor>p1.x_cor || p3.y_cor>p1.y_cor) && (p3.x_cor>p2.x_cor || p3.y_cor>p2.y_cor))
-                ||
-                ((p3.x_cor<p1.x_cor || p3.y_cor<p1.y_cor) && (p3.x_cor<p2.x_cor || p3.y_cor<p2.y_cor))))
-                {
-                cout<<"\n\tThe lines lie partially inside themselves.";
-                cout<<"\n\t\t-----> Improper Intersection <-----"<<endl;
-            }
-            
-            //For all lines are collinear but just touches one another
-            else{
-                cout<<"\n\tThe lines are collinear and just touches eachother.";
-                cout<<"\n\t\t-----> Improper Intersection <-----"<<endl;
-            }
-            
-        }
-        
-        //Check for improper intersection when only three points are collinear
-        else if ((p123 == 0 || p124 == 0 || p341 == 0 || p342 == 0)){
-            if(p123==0){
-               if((p3.x_cor>=p1.x_cor || p3.y_cor>=p1.y_cor) && (p3.x_cor<=p2.x_cor || p3.y_cor<=p2.y_cor)){
-                   flag=1;
-               }
-            }
-            else if(p124==0){
-                if((p4.x_cor>=p1.x_cor || p4.y_cor>=p1.y_cor) && (p4.x_cor<=p2.x_cor || p4.y_cor<=p2.y_cor)){
-                    flag=1;
-                }
-            }
-            else if(p341==0){
-                if((p1.x_cor>=p3.x_cor || p1.y_cor>=p3.y_cor) && (p1.x_cor<=p4.x_cor || p1.y_cor<=p4.y_cor)){
-                    flag=1;
-                }
-            }
-            else if(p342==0){
-                if((p2.x_cor>=p3.x_cor || p2.y_cor>=p3.y_cor) && (p2.x_cor<=p4.x_cor || p2.y_cor<=p4.y_cor)){
-                    flag=1;
-                }
-            }
-            if(flag==1){
-                cout<<"\n\t\t-----> Improper Intersection <-----"<<endl;
-            }
-            else{
-                cout<<"\n\t\t-----> Lines do not intersects. <-----"<<endl;
-            }
-        }
-        
-        else{
-            cout<<"\n\t\t-----> Lines do not intersects. <-----"<<endl;
-        }
+        else
+            return true;
     }
     
     /*- function to calculate area
