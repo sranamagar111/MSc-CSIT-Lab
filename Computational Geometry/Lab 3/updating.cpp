@@ -10,6 +10,11 @@ class Point{
        cout<<"\t\tEnter the Y-coordinate: ";
        cin>>y_cor;
     }
+    template <class A, class B>
+    void setPointCoordinate(A& a, B& b){
+        this->x_cor = a;
+        this->y_cor = b;
+    }
     void displayPoint(){
         cout<<"("<<x_cor<<" ,"<<y_cor<<")";
     }
@@ -25,6 +30,14 @@ class Line{
         point1.enterPointCoordinate();
         cout<<"\tFor End Point: "<<endl;
         point2.enterPointCoordinate();
+    }
+    
+    template <class A, class B>
+    void setLinePoints(A& a, B& b){
+        this->point1 = a;
+        this->point2 = b;
+        point1.setPointCoordinate(a.x_cor,a.y_cor);
+        point2.setPointCoordinate(b.x_cor,b.y_cor);
     }
 };
 
@@ -54,7 +67,7 @@ class TurnTest{
 };
 
 class LineIntersection{
-    public: int flag;
+    public: int flag=0;
             Line line1, line2;
     
     //Function to Check Intersection betwwn two lines A & B
@@ -62,6 +75,7 @@ class LineIntersection{
     int checkIntersection(A& a, B& b){
         this->line1 = a;
         this->line2 =b;
+        
         Point p1,p2,p3,p4;
         double p123, p124, p341, p342; 
         
@@ -76,12 +90,24 @@ class LineIntersection{
         p341 = computeArea(p3,p4,p1);
         p342 = computeArea(p3,p4,p2);
         
-        //Check for Pure Intersection
-        if (((p123 > 0 && p124 > 0) && (p341 < 0 && p342 < 0))|| ((p123 < 0 && p124 < 0) && (p341 > 0 && p342 > 0))){
-            return false;
+        //Check for intersection
+        if (((p123 > 0 && p124 < 0) && (p341 > 0 && p342 < 0))|| ((p123 > 0 && p124 < 0) && (p341 < 0 && p342 > 0)) || ((p123 < 0 && p124 > 0) && (p341 < 0 && p342 > 0))|| ((p123 < 0 && p124 > 0) && (p341 > 0 && p342 < 0))){
+            flag++;
         }
-        else
-            return true;
+        
+        /*//Displaying Lines
+        cout<<"\n\t(";
+        p1.displayPoint();
+        cout<<" & ";
+        p2.displayPoint();
+        cout<<") ---- ";
+        cout<<"(";
+        p3.displayPoint();
+        cout<<" & ";
+        p4.displayPoint();
+        cout<<") ---- ";
+        cout<< flag;*/
+        return flag;
     }
     
     /*- function to calculate area
@@ -100,7 +126,7 @@ struct vertex {
 }*start, *last;
 int count = 0;
 
-class polygon: public TurnTest {
+class polygon{
     public:
     polygon() {
         start = NULL;
@@ -134,7 +160,66 @@ class polygon: public TurnTest {
             last->n= start;
         }
     };
+    
+    void delete_pos() {
+        int i;
+        struct vertex *ptr, *s;
+        if (start == last && start == NULL) {
+          cout<<"List is empty, nothing to delete"<<endl;
+          return;
+        }
+        s = start;
+        count--;
+        last->n = s->n;
+        s->n->p = last;
+        start = s->n;
+        free(s);
+        return;
+    }
+    
+    template <class A>
+    int search(A& a) {
+        int pos = 0, i;
+        struct nod *s;
+        s = start;
+        for (i = 0;i < count;i++) {
+            pos++;
+            if (s->info == a) {
+                return pos;
+            }
+          s = s->n;
+        }
+    }
 
+    int checkPolygon(){
+        LineIntersection intersection;
+        Line edge1, edge2;
+        int flag=0;
+        struct vertex *s, *p, *n, *temp, *un, *up;
+        s = start;
+        n = s->n;
+        p = n->n;
+        temp = n;
+        un = n;
+        up = p;
+        for(int i = 0;i<count-1;i++){
+            edge1.setLinePoints(s->info, n->info);
+            for (int j = 0;j < count-i-1;j++) {
+                edge2.setLinePoints(un->info, up->info);
+                flag = intersection.checkIntersection(edge1,edge2);
+                up = up->n;
+                un = un->n;
+            }
+            p = p->n;
+            s = s->n;
+            n = n->n;
+            temp = n;
+            un = n;
+            up=p;
+        }
+        return flag;    
+    }
+    
     int checkConvex(){
         int i, flag;
         TurnTest t1;
@@ -208,7 +293,7 @@ void enterPolygonDetail(){
 };
 
 int main() {
-    int choice, convexFlag;
+    int choice, convexFlag, isPolygon;
     char cont;
     polygon pol;
     cout<<"\n\t\t\t *************************************************"<<endl;
@@ -235,22 +320,34 @@ int main() {
         case 2:
         Point p1;
             enterPolygonDetail();
+            pol.display();
+            isPolygon = pol.checkPolygon();
+            if((isPolygon)>0){
+                cout<<endl<<"\t************** ==> The given vertices does not represent a polygon. <== **************";
+                break;
+            }
             cout<<"\n\t Enter the point for which point inclusion is to be tested: "<<endl;
             p1.enterPointCoordinate();
-            pol.display();
             convexFlag = pol.checkConvex(p1);
             if(convexFlag > 0){
-                cout<<"\n\n\t****************************************************************";
-                cout<<"\n\t\t ===> The query point lies outside the polygon.";
-                cout<<"\n\t****************************************************************";
+                cout<<"\n\n\t***********************************************************************";
+                cout<<"\n\t\t ===> The query point ("<<p1.x_cor<<","<<p1.y_cor<<") lies outside the polygon.";
+                cout<<"\n\t***********************************************************************";
 
             }else{
-                cout<<"\n\n\t****************************************************************";
-                cout<<"\n\t\t ===> The query point lies inside the polygon.";
-                cout<<"\n\t****************************************************************";
+                cout<<"\n\n\t***********************************************************************";
+                cout<<"\n\t\t ===> The query point ("<<p1.x_cor<<" , "<<p1.y_cor<<") lies inside the polygon.";
+                cout<<"\n\t***********************************************************************";
             }
         break;
         case 3:
+            enterPolygonDetail();
+            pol.display();
+            isPolygon = pol.checkPolygon();
+            if((isPolygon)>0){
+                cout<<endl<<"The given vertices does not represent a polygon.";
+                break;
+            }
             cout<<"Ray Casting"<<endl;
             break;
         default:
