@@ -71,6 +71,19 @@ class TurnTest{
 class LineIntersection{
     public: int flag;
     
+    //Function to check betweeness
+    template<class A, class B, class C>
+    int checkBetweeness(A& a, B& b, C& c){
+        if(((a.x_cor == c.x_cor)&&(a.y_cor == c.y_cor)) || ((b.x_cor == c.x_cor)&&(b.y_cor == c.y_cor))){
+            return 1;
+        }
+        else if((((c.x_cor>a.x_cor)||(c.y_cor>a.y_cor))&&((c.x_cor<b.x_cor)||(c.y_cor<b.y_cor)))){
+            return 1;
+        }
+        else
+            return 0;
+    }
+    
     //Function to Check Intersection betwwn two lines A & B
     template<class A, class B>
     void checkIntersection(A& a, B& b){
@@ -92,6 +105,11 @@ class LineIntersection{
         p124 = computeArea(p1,p2,p4);
         p341 = computeArea(p3,p4,p1);
         p342 = computeArea(p3,p4,p2);
+        
+        cout<<"\n\tp123 = "<<p123;
+        cout<<"\n\tp124 = "<<p124;
+        cout<<"\n\tp341 = "<<p341;
+        cout<<"\n\tp342 = "<<p342;
         
         //Check for Pure Intersection
         if (((p123 > 0 && p124 < 0) && (p341 > 0 && p342 < 0))|| ((p123 > 0 && p124 < 0) && (p341 < 0 && p342 > 0)) || ((p123 < 0 && p124 > 0) && (p341 < 0 && p342 > 0))|| ((p123 < 0 && p124 > 0) && (p341 > 0 && p342 < 0))){
@@ -150,25 +168,18 @@ class LineIntersection{
         //Check for improper intersection when only three points are collinear
         else if ((p123 == 0 || p124 == 0 || p341 == 0 || p342 == 0)){
             if(p123==0){
-               if((p3.x_cor>=p1.x_cor || p3.y_cor>=p1.y_cor) && (p3.x_cor<=p2.x_cor || p3.y_cor<=p2.y_cor)){
-                   flag=1;
-               }
+               flag = checkBetweeness(p1,p2,p3);
             }
             else if(p124==0){
-                if((p4.x_cor>=p1.x_cor || p4.y_cor>=p1.y_cor) && (p4.x_cor<=p2.x_cor || p4.y_cor<=p2.y_cor)){
-                    flag=1;
-                }
+                flag = checkBetweeness(p1,p2,p4);
             }
             else if(p341==0){
-                if((p1.x_cor>=p3.x_cor || p1.y_cor>=p3.y_cor) && (p1.x_cor<=p4.x_cor || p1.y_cor<=p4.y_cor)){
-                    flag=1;
-                }
+                flag = checkBetweeness(p3,p4,p1);
             }
             else if(p342==0){
-                if((p2.x_cor>=p3.x_cor || p2.y_cor>=p3.y_cor) && (p2.x_cor<=p4.x_cor || p2.y_cor<=p4.y_cor)){
-                    flag=1;
-                }
+                flag = checkBetweeness(p3,p4,p2);
             }
+            cout<<"\n\t Flag = "<<flag;
             if(flag==1){
                 cout<<"\n\t\t-----> Improper Intersection <-----"<<endl;
             }
