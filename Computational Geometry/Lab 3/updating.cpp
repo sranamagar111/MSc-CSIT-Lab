@@ -321,6 +321,7 @@ int main() {
     int choice, convexFlag, isPolygon;
     char cont;
     polygon pol;
+    a:
     cout<<"\n\t\t\t *************************************************"<<endl;
     cout<<"\t\t\t                    LAB 3            "<<endl;
     cout<<"\t\t\t *************************************************"<<endl;
@@ -330,7 +331,6 @@ int main() {
     cout<<"\t\t\t ************************************************"<<endl;
     cout<<"\n\t\t Enter the choice(1/2/3): ";
     cin>>choice;
-    sw:
     switch(choice) {
         case 1:
             enterPolygonDetail();
@@ -358,7 +358,6 @@ int main() {
                 cout<<"\n\n\t***********************************************************************";
                 cout<<"\n\t\t ===> The query point ("<<p1.x_cor<<","<<p1.y_cor<<") lies outside the polygon.";
                 cout<<"\n\t***********************************************************************";
-
             }else{
                 cout<<"\n\n\t***********************************************************************";
                 cout<<"\n\t\t ===> The query point ("<<p1.x_cor<<" , "<<p1.y_cor<<") lies inside the polygon.";
@@ -386,12 +385,12 @@ int main() {
                 cout<<"\n\t\t ===> The query point ("<<p31.x_cor<<" , "<<p31.y_cor<<") lies inside the polygon.";
                 cout<<"\n\t***********************************************************************";
             }
-            break;
-        default:
-            cout<<"\t\t\t\t ***   Wrong choice   ***"<<endl;
-            cout<<"\n\t\t Enter the choice(1/2/3): ";
-            cin>>choice;
-            goto sw;
+        break;
+        default:cout<<"Invalid choice.\n\tEnter the correct choice number(1/2/3): "; 
     }
-    return 0;
+    cout<<"\n\n\t\tDo u want to continue(Y/N): ";
+    cin>>cont;
+    if(cont=='y'||cont=='Y')
+        goto a;
+    return 0; 
 }
