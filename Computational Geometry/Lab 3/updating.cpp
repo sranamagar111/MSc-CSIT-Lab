@@ -191,6 +191,7 @@ class polygon{
         }
     }
 
+    //Function to check if given vertices represent the polygon or not
     int checkPolygon(){
         LineIntersection intersection;
         Line edge1, edge2;
@@ -254,6 +255,30 @@ class polygon{
             n = n->n;
         }
         return flag;
+    }
+    
+    //Function to check the Ray Casting Value
+    template<class A>
+    int rayCastingValue(A& a){
+        LineIntersection intersection;
+        Line edge1, edge2;
+        Point point111;
+        point111.x_cor = 1024;
+        point111.y_cor = a.y_cor;
+        int flag=0;
+        struct vertex *s, *p, *n;
+        s = start;
+        n = s->n;
+        p = n->n;
+        edge1.setLinePoints(a, point111);
+        for(int i = 0;i<count;i++){
+            edge2.setLinePoints(p->info, n->info);
+            flag = intersection.checkIntersection(edge1,edge2);
+            p = p->n;
+            s = s->n;
+            n = n->n;
+        }
+        return flag;    
     }
 
     void display(){
@@ -341,6 +366,7 @@ int main() {
             }
         break;
         case 3:
+        Point p31;
             enterPolygonDetail();
             pol.display();
             isPolygon = pol.checkPolygon();
@@ -348,7 +374,18 @@ int main() {
                 cout<<endl<<"The given vertices does not represent a polygon.";
                 break;
             }
-            cout<<"Ray Casting"<<endl;
+            cout<<"\n\n\t Enter the point for which point inclusion is to be tested: "<<endl;
+            p31.enterPointCoordinate();
+            if(( pol.rayCastingValue(p31) % 2) == 0){
+                cout<<"\n\n\t***********************************************************************";
+                cout<<"\n\t\t ===> The query point ("<<p31.x_cor<<" , "<<p31.y_cor<<") lies outside the polygon.";
+                cout<<"\n\t***********************************************************************";    
+            }
+            else{
+                cout<<"\n\n\t***********************************************************************";
+                cout<<"\n\t\t ===> The query point ("<<p31.x_cor<<" , "<<p31.y_cor<<") lies inside the polygon.";
+                cout<<"\n\t***********************************************************************";
+            }
             break;
         default:
             cout<<"\t\t\t\t ***   Wrong choice   ***"<<endl;
